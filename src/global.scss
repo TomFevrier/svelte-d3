@@ -1,0 +1,43 @@
+* {
+	box-sizing: border-box;
+}
+
+$screen-sm: 32rem; // 512px
+
+@mixin sm {
+   @media (max-width: #{$screen-sm}) {
+       @content;
+   }
+}
+
+$screen-md: 48rem; // 768px
+
+@mixin md {
+   @media (max-width: #{$screen-md}) {
+       @content;
+   }
+}
+
+$screen-lg: 64rem; // 1024px
+
+@mixin lg {
+   @media (max-width: #{$screen-lg}) {
+       @content;
+   }
+}
+
+$screen-xl: 96rem; // 1536px
+
+@mixin xl {
+   @media (max-width: #{$screen-xl}) {
+       @content;
+   }
+}
+
+h1 {
+	font-size: 4rem;
+}
+
+h2 {
+	margin: 0;
+}
