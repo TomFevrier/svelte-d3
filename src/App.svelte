@@ -2,6 +2,7 @@
 	import { csv, tsv, json } from 'd3-fetch';
 	import { scaleLinear, scaleLog } from 'd3-scale';
 	import { nest } from 'd3-collection';
+	import { format } from 'd3-format';
 
 	import Chart from './Chart.svelte';
 
@@ -41,6 +42,11 @@
 				.entries(d);
 			console.log(dataBarChartRace)
 		});
+
+	let template = (d) => `
+		<h3>${d.name}: ${d.value}</h3>
+		<p>${d.year}</p>
+	`
 </script>
 
 <main>
@@ -62,8 +68,9 @@
 			title="Genres of top movies of 2018"
 			width={800} height={500}
 			key='key' value='value'
-			barOrientation='horizontal' sortBars
-			animate duration={2000} />
+			barOrientation='horizontal' sortBars grid
+			animate duration={2000}
+			tooltip tooltipTemplate={template} />
 	{/if}
 	{#if dataLineChart}
 		<Chart
@@ -71,6 +78,8 @@
 			data={dataLineChart}
 			title="Some random values"
 			width={800} height={500}
+			xTicks="{{ value: 5 }}"
+			yTicks="{{ value: 14, type: 'every' }}" yGrid
 			animate duration={5000} />
 	{/if}
 	{#if dataScatterPlot}
@@ -79,8 +88,8 @@
 			data={dataScatterPlot}
 			title="Health and wealth of nations"
 			width={800} height={500}
-			x='gdp' xScaleType={scaleLog}
-			y='life_expectancy' yScaleType={scaleLinear}
+			x='gdp' xScaleType={scaleLog} xTicks="{{ value: 5 }}" xTickFormat="{ d => format('~s')(d / 1e6) }" xGrid
+			y='life_expectancy' yScaleType={scaleLinear} yGrid
 			r='population'
 			animate duration={2000} />
 	{/if}

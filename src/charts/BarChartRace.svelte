@@ -134,7 +134,7 @@
 <g bind:this={g} class="bar-chart-race">
 	<text class='legend' />
 </g>
-<Axis {width} {height} {margin} bind:scale={scale} orient='top' />
+<Axis {width} {height} {margin} bind:scale={scale} orient='top' hideArrow />
 
 <style>
 	.legend {
