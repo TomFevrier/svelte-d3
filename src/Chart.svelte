@@ -6,6 +6,7 @@
 	import ScatterPlot from './charts/ScatterPlot.svelte';
 	import LineChart from './charts/LineChart.svelte';
 	import BarChart from './charts/BarChart.svelte';
+	import BarChartRace from './charts/BarChartRace.svelte';
 
 	// General props
 	export let type;
@@ -20,8 +21,10 @@
 	// Props for XY chart (ScatterPlot, LineChart...)
 	export let x = 'x';
 	export let xScaleType = scaleLinear;
+	export let xAxisOrient = 'bottom'
 	export let y = 'y';
 	export let yScaleType = scaleLinear;
+	export let yAxisOrient = 'left';
 	export let r = 10; // For ScatterPlot
 
 	// Props for BarChart
@@ -29,6 +32,9 @@
 	export let value = 'value';
 	export let barOrientation = 'vertical';
 	export let sortBars = false;
+
+	// Props for BarChartRace
+	export let limit = 10;
 
 	// Props for animation
 	export let animate = false;
@@ -72,16 +78,16 @@
 			{y} {yScale}
 			{r}
 			{animate} {duration} />
-		<Axis {width} {height} {margin} scale={xScale} orient='bottom' />
-		<Axis {width} {height} {margin} scale={yScale} orient='left' />
+		<Axis {width} {height} {margin} scale={xScale} orient={xAxisOrient} />
+		<Axis {width} {height} {margin} scale={yScale} orient={yAxisOrient} />
 	{:else if type === 'LineChart'}
 		<LineChart
 			{data}
 			{x} {xScale}
 			{y} {yScale}
 			{animate} {duration} />
-		<Axis {width} {height} {margin} scale={xScale} orient='bottom' />
-		<Axis {width} {height} {margin} scale={yScale} orient='left' />
+		<Axis {width} {height} {margin} scale={xScale} orient={xAxisOrient} />
+		<Axis {width} {height} {margin} scale={yScale} orient={yAxisOrient} />
 	{:else if type === 'BarChart'}
 		<BarChart
 			{data}
@@ -95,5 +101,11 @@
 		<Axis
 			{width} {height} {margin} scale={scale}
 			orient="{barOrientation === 'vertical' ? 'left' : 'bottom'}" />
+	{:else if type === 'BarChartRace'}
+		<BarChartRace
+			{data}
+			{margin} {width} {height}
+			{limit}
+			{animate} {duration} />
 	{/if}
 </svg>

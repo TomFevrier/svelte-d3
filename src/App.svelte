@@ -1,5 +1,5 @@
 <script>
-	import { csv, tsv } from 'd3-fetch';
+	import { csv, tsv, json } from 'd3-fetch';
 	import { scaleLinear, scaleLog } from 'd3-scale';
 	import { nest } from 'd3-collection';
 
@@ -31,10 +31,30 @@
 				.rollup(v => v.length)
 				.entries(d);
 		});
+
+	let dataBarChartRace;
+	json('./barChartRace.json')
+		.then(d => {
+			dataBarChartRace = nest()
+				.key(d => new Date(d.date).getFullYear())
+				.rollup(v => v.sort((a, b) => b.value - a.value))
+				.entries(d);
+			console.log(dataBarChartRace)
+		});
 </script>
 
 <main>
 	<h1>Demo - Svelte &times; D3.js</h1>
+	{#if dataBarChartRace}
+		<Chart
+			type='BarChartRace'
+			data={dataBarChartRace}
+			title="Highest-valued companies (2000 - 2019)"
+			width={800} height={400}
+			key='key' value='value'
+			limit={5}
+			animate duration={2000} />
+	{/if}
 	{#if dataBarChart}
 		<Chart
 			type='BarChart'
