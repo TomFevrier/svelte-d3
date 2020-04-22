@@ -1,41 +1,67 @@
 <script>
-	import { onMount } from 'svelte';
-	import { select, selectAll } from 'd3-selection';
-	import { scaleBand } from 'd3-scale';
-	import { transition } from 'd3-transition';
+	import { max } from 'd3-array';
+	import { scaleBand, scaleLinear } from 'd3-scale';
 
+	import Axis from '../components/Axis.svelte';
+	import Grid from '../components/Grid.svelte';
+	import SimpleBarChart from './SimpleBarChart.svelte';
+
+	// General props
+	export let type;
 	export let data;
+
+	// Layout props
+	export let width;
+	export let height;
+	export let margin;
+
 	export let key;
-	export let labels;
 	export let value;
-	export let scale;
 	export let barOrientation;
+	export let sortBars;
+	export let grid;
+
+	// Props for animation
 	export let animate;
 	export let duration;
 
-	let g;
+	if (sortBars)
+		data = data.sort((a, b) => b[value] - a[value]);
 
-	onMount(() => {
-		let bars = select(g).selectAll('rect')
-			.data(data).enter()
-			.append('rect')
-				.attr('x', d => barOrientation === 'vertical' ? labels(d[key]) : scale(0))
-				.attr('fill', 'rebeccapurple');
+	const labels = scaleBand()
+		.domain(data.map(e => e[key]))
+		.range(barOrientation === 'vertical'
+			? [margin, width - margin]
+			: [margin, height - margin])
+		.paddingInner(0.1);
 
-		if (animate) {
-			bars = bars
-				.attr('y', d => barOrientation === 'vertical' ? scale(0) : labels(d[key]))
-				.attr('width', barOrientation === 'vertical' ? labels.bandwidth() : 0)
-				.attr('height', barOrientation === 'vertical' ? 0 : labels.bandwidth())
-				.transition()
-				.duration(duration);
-		}
-
-		bars
-			.attr('y', d => barOrientation === 'vertical' ? scale(d[value]) : labels(d[key]))
-			.attr('height', barOrientation === 'vertical' ? d => scale(0) - scale(d[value]) : labels.bandwidth())
-			.attr('width', barOrientation === 'vertical' ? labels.bandwidth() : d => scale(d[value]) - scale(0));
-	});
+	const scale = scaleLinear()
+		.domain([0, max(data, d => d[value])])
+		.range(barOrientation === 'vertical'
+			? [height - margin, margin]
+			: [margin, width - margin]);
 </script>
 
-<g bind:this={g} class="bar-chart"></g>
+<svg {width} {height} class="chart">
+	{#if type === 'BarChart'}
+		{#if grid}
+			<Grid
+				{width} {height} {margin}
+				scale={scale}
+				direction="{barOrientation === 'vertical' ? 'horizontal' : 'vertical'}" />
+		{/if}
+		<Axis
+			{width} {height} {margin} scale={labels}
+			orient="{barOrientation === 'vertical' ? 'bottom' : 'left'}"
+			hideArrow hideTicks />
+		<Axis
+			{width} {height} {margin} scale={scale}
+			orient="{barOrientation === 'vertical' ? 'left' : 'bottom'}" />
+		<SimpleBarChart
+			{data}
+			{key} {labels}
+			{value} {scale}
+			{barOrientation}
+			{animate} {duration} />
+	{/if}
+</svg>
