@@ -11,7 +11,6 @@
 
 	// Layout props
 	export let title;
-	export let width;
 	export let height;
 	export let margin = 80;
 
@@ -43,32 +42,70 @@
 	// Props for animation
 	export let animate = false;
 	export let duration = 1000;
+
+	// Props for tooltip
+	export let tooltip = false;
+	export let tooltipTemplate = "";
+
+	let width;
+	let tooltipRef;
 </script>
 
-<h2 class="chart-title">{title}</h2>
-{#if type === 'LineChart' || type === 'ScatterPlot'}
-	<Chart2D
-	 	{type}
-		{data}
-		{width} {height} {margin}
-		{x} {xScaleType} {xAxisOrient} {xTicks} {xTickFormat} {xGrid}
-		{y} {yScaleType} {yAxisOrient} {yTicks} {yTickFormat} {yGrid}
-		{r}
-		{animate} {duration} />
-{:else if type === 'BarChart'}
-	<BarChart
-	 	{type}
-		{data}
-		{width} {height} {margin}
-		{key} {value}
-		{barOrientation}
-		{sortBars}
-		{grid}
-		{animate} {duration} />
-{:else if type === 'BarChartRace'}
-	<BarChartRace
-		{data}
-		{margin} {width} {height}
-		{limit}
-		{animate} {duration} />
-{/if}
+<div class='chart-container' bind:clientWidth={width}>
+	<h2 class='chart-title'>{title}</h2>
+	{#if type === 'LineChart' || type === 'ScatterPlot'}
+		<Chart2D
+		 	{type}
+			{data}
+			{width} {height} {margin}
+			{x} {xScaleType} {xAxisOrient} {xTicks} {xTickFormat} {xGrid}
+			{y} {yScaleType} {yAxisOrient} {yTicks} {yTickFormat} {yGrid}
+			{r}
+			{animate} {duration}
+			{tooltipRef} {tooltipTemplate} />
+	{:else if type === 'BarChart'}
+		<BarChart
+		 	{type}
+			{data}
+			{width} {height} {margin}
+			{key} {value}
+			{barOrientation}
+			{sortBars}
+			{grid}
+			{animate} {duration}
+			{tooltipRef} {tooltipTemplate} />
+	{:else if type === 'BarChartRace'}
+		<BarChartRace
+			{data}
+			{width} {height} {margin} 
+			{limit}
+			{animate} {duration} />
+	{/if}
+	{#if tooltip}
+		<div bind:this={tooltipRef} class='tooltip'></div>
+	{/if}
+</div>
+
+<style>
+	.chart-container {
+		position: relative;
+	}
+
+	.chart-title {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.tooltip {
+		position: absolute;
+		opacity: 0;
+		background: #FFFAFA;
+		border-radius: 5%;
+		width: fit-content;
+		max-width: 200px;
+		padding: 0.5rem;
+		text-wrap: none;
+		transition: all 0.3s;
+	}
+</style>

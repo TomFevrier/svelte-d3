@@ -15,6 +15,7 @@
 				e.population = +e.population;
 			});
 			dataScatterPlot = d;
+			console.log(dataScatterPlot)
 		});
 
 	const dataLineChart = Array.from({ length: 100 }, (e, i) => {
@@ -44,14 +45,25 @@
 		});
 
 	let template = (d) => `
-		<h3>${d.name}: ${d.value}</h3>
-		<p>${d.year}</p>
+		<p>${d.key}: ${d.value}</p>
 	`
 </script>
 
 <main>
 	<h1>Demo - Svelte &times; D3.js</h1>
-	{#if dataBarChartRace}
+	<p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque, quas delectus? Modi similique nostrum veritatis corrupti sunt dicta itaque eius maxime eveniet perferendis, expedita asperiores ipsa illo odio, impedit optio.</p>
+	<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa quod eligendi vitae, doloribus dicta pariatur nihil autem, nisi velit corporis unde delectus. Ipsam fuga nihil ipsum quod facere, eligendi consectetur!</p>
+	<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore dolor, provident non hic aperiam aut, amet magnam eius neque aliquid laboriosam. Placeat porro architecto est dignissimos error suscipit nesciunt fugiat.</p>
+	<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat illo minima magni quia cum suscipit, alias quasi quidem inventore a. Laborum labore suscipit soluta enim alias. Inventore eos dolores vel.</p>
+	<p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque, quas delectus? Modi similique nostrum veritatis corrupti sunt dicta itaque eius maxime eveniet perferendis, expedita asperiores ipsa illo odio, impedit optio.</p>
+	<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa quod eligendi vitae, doloribus dicta pariatur nihil autem, nisi velit corporis unde delectus. Ipsam fuga nihil ipsum quod facere, eligendi consectetur!</p>
+	<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore dolor, provident non hic aperiam aut, amet magnam eius neque aliquid laboriosam. Placeat porro architecto est dignissimos error suscipit nesciunt fugiat.</p>
+	<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat illo minima magni quia cum suscipit, alias quasi quidem inventore a. Laborum labore suscipit soluta enim alias. Inventore eos dolores vel.</p>
+	<p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque, quas delectus? Modi similique nostrum veritatis corrupti sunt dicta itaque eius maxime eveniet perferendis, expedita asperiores ipsa illo odio, impedit optio.</p>
+	<p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa quod eligendi vitae, doloribus dicta pariatur nihil autem, nisi velit corporis unde delectus. Ipsam fuga nihil ipsum quod facere, eligendi consectetur!</p>
+	<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore dolor, provident non hic aperiam aut, amet magnam eius neque aliquid laboriosam. Placeat porro architecto est dignissimos error suscipit nesciunt fugiat.</p>
+	<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat illo minima magni quia cum suscipit, alias quasi quidem inventore a. Laborum labore suscipit soluta enim alias. Inventore eos dolores vel.</p>
+	<!-- {#if dataBarChartRace}
 		<Chart
 			type='BarChartRace'
 			data={dataBarChartRace}
@@ -60,7 +72,7 @@
 			key='key' value='value'
 			limit={5}
 			animate duration={2000} />
-	{/if}
+	{/if} -->
 	{#if dataBarChart}
 		<Chart
 			type='BarChart'
@@ -69,6 +81,15 @@
 			width={800} height={500}
 			key='key' value='value'
 			barOrientation='horizontal' sortBars grid
+			animate duration={2000}
+			tooltip tooltipTemplate={template} />
+		<Chart
+			type='BarChart'
+			data={dataBarChart}
+			title="Genres of top movies of 2018"
+			width={800} height={500}
+			key='key' value='value'
+			barOrientation='vertical' sortBars grid
 			animate duration={2000}
 			tooltip tooltipTemplate={template} />
 	{/if}
@@ -91,7 +112,16 @@
 			x='gdp' xScaleType={scaleLog} xTicks="{{ value: 5 }}" xTickFormat="{ d => format('~s')(d / 1e6) }" xGrid
 			y='life_expectancy' yScaleType={scaleLinear} yGrid
 			r='population'
-			animate duration={2000} />
+			animate duration={2000}
+			tooltip tooltipTemplate={d => d.country} />
+		<Chart
+			type='ScatterPlot'
+			data={dataScatterPlot}
+			title="Health and wealth of nations"
+			width={800} height={500}
+			x='gdp' xScaleType={scaleLog} xTicks="{{ value: 5 }}" xTickFormat="{ d => format('~s')(d / 1e6) }" xGrid
+			y='life_expectancy' yScaleType={scaleLinear} yGrid
+			r={10} />
 	{/if}
 </main>
 

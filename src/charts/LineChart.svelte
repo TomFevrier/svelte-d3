@@ -1,7 +1,6 @@
 <script>
-	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import { line } from 'd3-shape';
-	import { select, selectAll } from 'd3-selection';
 	import { transition } from 'd3-transition';
 
 	export let data;
@@ -13,30 +12,36 @@
 	export let duration;
 
 	let g;
+	let scrollY;
 
-	onMount(() => {
-		const lineGenerator = line()
-			.x(d => xScale(d[x]))
-			.y(d => yScale(d[y]));
+	$: visible = animate && g && scrollY > g.parentNode.getBoundingClientRect().y + window.innerHeight * 0.5;
 
-		let path = select(g).append('path');
+	$: lineGenerator = line()
+		.x(d => xScale(d[x]))
+		.y(d => yScale(d[y]));
 
-		path.datum(data)
-			.attr('d', lineGenerator)
-			.attr('fill', 'none')
-			.attr('stroke', 'rebeccapurple')
-			.attr('stroke-width', 2)
-			.attr('stroke-linecap', 'round');
-
-		if (animate) {
-			path
-				.attr('stroke-dasharray', path.node().getTotalLength())
-				.attr('stroke-dashoffset', path.node().getTotalLength())
-				.transition()
-				.duration(duration)
-					.attr('stroke-dashoffset', 0);
-		}
-	});
+	const reveal = (node) => {
+		if (!animate) return;
+		const length = node.getTotalLength();
+		node.style.strokeDasharray = length;
+		return {
+			duration,
+			css: (t, u) => `stroke-dashoffset: ${u * length}`
+		};
+	}
 </script>
 
-<g bind:this={g} class="line-chart"></g>
+<svelte:window bind:scrollY />
+<g bind:this={g} class='line-chart'>
+	{#if !animate || visible}
+		<path
+			d={lineGenerator(data)}
+			fill='none'
+			stroke='rebeccapurple'
+			stroke-width={2}
+			stroke-linecap='round'
+			in:reveal
+			out:fade
+		/>
+	{/if}
+</g>

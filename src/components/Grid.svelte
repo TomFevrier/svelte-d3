@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { beforeUpdate } from 'svelte';
 	import { select } from 'd3-selection';
 	import { axisBottom, axisTop, axisLeft, axisRight } from 'd3-axis';
 	import { range } from 'd3-array';
@@ -13,15 +13,18 @@
 
 	let g;
 	let grid;
+	let transform;
 
-	onMount(() => {
+	$: {
+		select(g).selectAll('*').remove();
+
 		if (direction == 'horizontal') {
-			grid = axisLeft(scale)
+			grid = axisLeft(scale).tickSizeOuter(0).tickFormat("")
 				.tickSize(2 * margin - width);
 			select(g).attr('transform', `translate(${margin}, 0)`);
 		}
 		else {
-			grid = axisBottom(scale)
+			grid = axisBottom(scale).tickSizeOuter(0).tickFormat("")
 				.tickSize(2 * margin - height);
 			select(g).attr('transform', `translate(0, ${height - margin})`);
 		}
@@ -32,14 +35,11 @@
 			else
 				grid.ticks(ticks.value);
 		}
-
-		grid.tickSizeOuter(0).tickFormat("");
-
 		select(g).call(grid);
-	});
+	}
 </script>
 
-<g bind:this={g} class="grid"></g>
+<g bind:this={g} class='grid' {transform}></g>
 
 <style>
 	.grid {

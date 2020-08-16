@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { beforeUpdate } from 'svelte';
 	import { select, selectAll } from 'd3-selection';
 	import { scaleLinear, scaleBand } from 'd3-scale';
 	import { min, max, range } from 'd3-array';
@@ -20,18 +20,23 @@
 
 	let g;
 
-	const labels = scaleBand()
-		.domain(range(limit + 1))
-		.range([margin, margin + limit / (limit - 1) * (height - 2 * margin)])
-		.paddingInner(0.1);
+	let labels;
+	let scale;
 
-	console.log(data[0])
+	beforeUpdate(() => {
+		if (!g) return;
 
-	let scale = scaleLinear()
-		.domain([0, max(data[0].value, d => d.value)])
-		.range([margin, width - margin]);
+		console.log(data)
 
-	onMount(() => {
+		labels = scaleBand()
+			.domain(range(limit + 1))
+			.range([margin, margin + limit / (limit - 1) * (height - 2 * margin)])
+			.paddingInner(0.1);
+
+		scale = scaleLinear()
+			.domain([0, max(data[0].value, d => d.value)])
+			.range([margin, width - margin]);
+
 		const onEnter = (enter) => {
 			const bar = enter.append('g')
 				.attr('class', 'bar')
@@ -51,6 +56,7 @@
 				.property('_current', d => {
 					if (new Date(d.date).getFullYear() == min(data, d => +d.key))
 						return 0;
+					console.log(data.find(e => e.key == new Date(d.date).getFullYear() - 1).value.find(e => e.name == d.name))
 					return data.find(e => e.key == new Date(d.date).getFullYear() - 1).value
 						.find(e => e.name == d.name)
 						.value;
@@ -131,8 +137,8 @@
 	});
 </script>
 
-<svg {width} {height} class="chart">
-	<g bind:this={g} class="bar-chart-race">
+<svg {width} {height} class='chart'>
+	<g bind:this={g} class='bar-chart-race'>
 		<text class='legend' />
 	</g>
 	<Axis {width} {height} {margin} bind:scale={scale} orient='top' hideArrow />

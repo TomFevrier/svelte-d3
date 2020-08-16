@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import { extent } from 'd3-array';
 
 	import Axis from '../components/Axis.svelte';
@@ -33,16 +34,22 @@
 	export let animate;
 	export let duration;
 
-	const xScale = xScaleType()
+	// Props for tooltip
+	export let tooltipRef;
+	export let tooltipTemplate;
+
+	let svg;
+
+	$: xScale = xScaleType()
 		.domain(extent(data, d => d[x]))
 		.range([margin, width - margin]);
 
-	const yScale = yScaleType()
+	$: yScale = yScaleType()
 		.domain(extent(data, d => d[y]))
 		.range([height - margin, margin]);
 </script>
 
-<svg {width} {height} class="chart">
+<svg bind:this={svg} {width} {height} class='chart'>
 	{#if type === 'ScatterPlot'}
 		{#if xGrid}
 			<Grid {width} {height} {margin} scale={xScale} direction='vertical' ticks={xTicks} />
@@ -57,7 +64,8 @@
 			{x} {xScale}
 			{y} {yScale}
 			{r}
-			{animate} {duration} />
+			{animate} {duration}
+			{tooltipRef} {tooltipTemplate} />
 	{:else if type === 'LineChart'}
 		{#if xGrid}
 			<Grid {width} {height} {margin} scale={xScale} direction='vertical' ticks={xTicks} />
@@ -73,4 +81,16 @@
 			{y} {yScale}
 			{animate} {duration} />
 	{/if}
+	<svg:defs>
+		<svg:marker
+			id='arrow'
+			markerWidth={30}
+			markerHeight={30}
+			refX={6}
+			refY={6}
+			orient='auto'
+		>
+			<path d='M 0 0 12 6 0 12 3 6' />
+		</svg:marker>
+	</svg:defs>
 </svg>
